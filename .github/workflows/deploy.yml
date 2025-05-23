@@ -1,4 +1,4 @@
-name: Deploy NestJS App
+name: Deploy NestJS App to EC2
 
 on:
   push:
@@ -21,11 +21,21 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@13.212.29.65 << 'EOF'
+            # Clone nếu chưa tồn tại, ngược lại thì pull
+            if [ ! -d "~/nest-docker" ]; then
+              git clone https://github.com/Tanhoccode/DevOps.git ~/nest-docker
+            fi
+
             cd ~/nest-docker
+            git reset --hard HEAD
             git pull origin main
+
+            # Build và chạy lại container
             docker stop nest-container || true
             docker rm nest-container || true
-            docker rmi -f nest-docker || true
-            docker build --no-cache -t nest-docker .
+            docker rmi nest-docker:latest || true
+
+            docker build -t nest-docker .
             docker run -d -p 3000:3000 --name nest-container nest-docker
           EOF
+
