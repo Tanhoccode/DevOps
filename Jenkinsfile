@@ -1,6 +1,6 @@
 pipeline {
     agent any
-//clone
+//clone project
     stages {
         stage('Build') {
             steps {
