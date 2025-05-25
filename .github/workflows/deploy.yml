@@ -1,41 +1,41 @@
-name: Deploy NestJS App to EC2
+# name: Deploy NestJS App to EC2
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout source
+#         uses: actions/checkout@v3
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+#       - name: Set up SSH
+#         uses: webfactory/ssh-agent@v0.7.0
+#         with:
+#           ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@13.212.29.65 << 'EOF'
-            # Clone nếu chưa tồn tại, ngược lại thì pull
-            if [ ! -d "~/nest-docker" ]; then
-              git clone https://github.com/Tanhoccode/DevOps.git ~/nest-docker
-            fi
+#       - name: Deploy to EC2
+#         run: |
+#           ssh -o StrictHostKeyChecking=no ubuntu@13.212.29.65 << 'EOF'
+#             # Clone nếu chưa tồn tại, ngược lại thì pull
+#             if [ ! -d "~/nest-docker" ]; then
+#               git clone https://github.com/Tanhoccode/DevOps.git ~/nest-docker
+#             fi
 
-            cd ~/nest-docker
-            git reset --hard HEAD
-            git pull origin main
+#             cd ~/nest-docker
+#             git reset --hard HEAD
+#             git pull origin main
 
-            # Build và chạy lại container
-            docker stop nest-container || true
-            docker rm nest-container || true
-            docker rmi nest-docker:latest || true
+#             # Build và chạy lại container
+#             docker stop nest-container || true
+#             docker rm nest-container || true
+#             docker rmi nest-docker:latest || true
 
-            docker build -t nest-docker .
-            docker run -d -p 3000:3000 --name nest-container nest-docker
-          EOF
+#             docker build -t nest-docker .
+#             docker run -d -p 3000:3000 --name nest-container nest-docker
+#           EOF
 
