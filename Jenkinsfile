@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     options {
-        timeout(time: 30, unit: 'MINUTES') // Tăng timeout lên 30 phút ne
+        timeout(time: 20, unit: 'MINUTES') // Tăng timeout lên 30 phút ne
         skipDefaultCheckout(true)
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
@@ -39,7 +39,7 @@ pipeline {
         
         stage('Deploy Application') {
             options {
-                timeout(time: 25, unit: 'MINUTES') // Timeout riêng cho stage này
+                timeout(time: 25, unit: 'MINUTES') // Timeout riêng cho stage này 
             }
             steps {
                 script {
