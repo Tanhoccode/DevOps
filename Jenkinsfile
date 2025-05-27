@@ -10,7 +10,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "nest-app"
         DOCKER_TAG = "${BUILD_NUMBER}"
-        EC2_HOST = "13.214.166.36"
+        EC2_HOST = "13.214.38.4"
         EC2_USER = "ubuntu"
         APP_DIR = "/home/ubuntu/nest-docker"
     }
