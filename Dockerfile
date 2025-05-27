@@ -3,12 +3,11 @@ FROM node:20
 
 WORKDIR /usr/src/app
 
+# Chỉ copy package.json để cache npm install
 COPY package*.json ./
 RUN npm install
 
+# Sau đó mới copy toàn bộ source
 COPY . .
 
-RUN npm run build
-
-EXPOSE 3000
-CMD ["node", "dist/main"]
+CMD ["npm", "start"]
