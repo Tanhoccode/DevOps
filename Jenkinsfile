@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     echo 'Checking EC2 connection...'
-                    sshagent(['ubuntu']) {
+                    sshagent(['SSH-keygen-1']) {
                         sh '''
                             ssh -o ConnectTimeout=30 -o StrictHostKeyChecking=no \
                             ${EC2_USER}@${EC2_HOST} "echo 'Connection successful'"
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     echo 'Starting deployment to EC2...'
-                    sshagent(['ubuntu']) {
+                    sshagent(['SSH-keygen-1']) {
                         sh '''
                             ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
                             set -e
@@ -110,7 +110,7 @@ EOF
             steps {
                 script {
                     echo 'Performing health check...'
-                    sshagent(['ubuntu']) {
+                    sshagent(['SSH-keygen-1']) {
                         sh '''
                             # Wait for application to be ready
                             sleep 10
@@ -151,4 +151,4 @@ EOF
             echo '⚠️ Pipeline was aborted!'
         }
     }
-}   
+}
