@@ -41,33 +41,6 @@ pipeline {
             }
         }
         
-        stage('Setup Docker') {
-            steps {
-                script {
-                    echo 'Installing Docker if not exists...'
-                    sshagent(['ec2-ssh-key']) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'ENDSSH'
-                                # Check if Docker is installed
-                                if ! command -v docker &> /dev/null; then
-                                    echo "Docker not found. Installing Docker..."
-                                    sudo apt update
-                                    sudo apt install -y docker.io
-                                    sudo systemctl start docker
-                                    sudo systemctl enable docker
-                                    sudo usermod -aG docker ubuntu
-                                    echo "Docker installed successfully!"
-                                else
-                                    echo "Docker is already installed"
-                                    docker --version
-                                fi
-ENDSSH
-                        """
-                    }
-                }
-            }
-        }
-        
         stage('Deploy Application') {
             steps {
                 script {
