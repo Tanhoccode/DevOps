@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        EC2_HOST = '18.140.231.253'
+        EC2_HOST = '13.214.166.36'
         EC2_USER = 'ubuntu'
         REPO_URL = 'https://github.com/Tanhoccode/DevOps.git'
         PROJECT_DIR = 'nest-docker'
