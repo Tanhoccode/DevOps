@@ -16,7 +16,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         // Timeout cho toàn bộ pipeline
         timeout(time: 10, unit: 'MINUTES')
-        // Không cho phép build đồng thời
+        // Không cho phép build đồng thời ne
         disableConcurrentBuilds()
     }
     
