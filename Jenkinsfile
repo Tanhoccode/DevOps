@@ -12,7 +12,7 @@ pipeline {
     }
     
     options {
-        // Giữ lại 10 build gần nhất
+        // Giữ lại 10 build gần nhất ne
         buildDiscarder(logRotator(numToKeepStr: '10'))
         // Timeout cho toàn bộ pipeline
         timeout(time: 10, unit: 'MINUTES')
