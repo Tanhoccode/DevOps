@@ -12,13 +12,9 @@ env:
   IMAGE_TAG: latest
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      id-token: write  # Cho phép OIDC sử dụng AWS credential (nếu dùng IAM role)
-    
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -31,7 +27,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
-        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
@@ -45,3 +40,15 @@ jobs:
       - name: Push image to Amazon ECR
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy on EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 13.212.123.62
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            docker stop nest-container || true
+            docker rm nest-container || true
+            docker run -d --name nest-container -p 3000:3000 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
