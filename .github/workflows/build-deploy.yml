@@ -60,7 +60,6 @@ jobs:
             sudo docker stop nest-container || true
             sudo docker rm nest-container || true
             sudo docker run -d --name nest-container -p 3000:3000 \$IMAGE
-    EOF
         env:
           EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           AWS_REGION: ${{ env.AWS_REGION }}
