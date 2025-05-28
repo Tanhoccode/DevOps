@@ -10,7 +10,7 @@ env:
   ECR_REGISTRY: 288761751364.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPOSITORY: staging/nestjs
   IMAGE_TAG: latest
-  EC2_HOST: 13.212.123.62
+  EC2_HOST: 13.229.157.98
   EC2_USER: ubuntu
 
 jobs:
