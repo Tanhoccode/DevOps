@@ -10,10 +10,16 @@ env:
   ECR_REGISTRY: 288761751364.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPOSITORY: staging/nestjs
   IMAGE_TAG: latest
- # Tanne
+  EC2_HOST: 13.212.123.62
+  EC2_USER: ubuntu
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout source code
@@ -41,14 +47,23 @@ jobs:
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Deploy on EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: 13.229.157.98
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          script: |
-            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-            docker stop nest-container || true
-            docker rm nest-container || true
-            docker run -d --name nest-container -p 3000:3000 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Deploy to EC2 and restart container
+        run: |
+          echo "$EC2_SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST <<EOF
+            echo "== Pulling and restarting container =="
+            IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+            sudo docker login -u AWS -p $(aws ecr get-login-password --region $AWS_REGION) $ECR_REGISTRY
+            sudo docker pull \$IMAGE
+            sudo docker stop nest-container || true
+            sudo docker rm nest-container || true
+            sudo docker run -d --name nest-container -p 3000:3000 \$IMAGE
+    EOF
+        env:
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+          ECR_REGISTRY: ${{ env.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
