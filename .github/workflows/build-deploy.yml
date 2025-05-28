@@ -10,7 +10,7 @@ env:
   ECR_REGISTRY: 288761751364.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPOSITORY: staging/nestjs
   IMAGE_TAG: latest
-
+ # Tanne
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
